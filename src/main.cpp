@@ -6,188 +6,117 @@
 #include <fstream>
 #include <cctype>  
 #include <sstream>
+#include <limits>
 
-#include "../src/Course.cpp"
-
-// #include "Functions.h" 
-
-using namespace std;
-
-// Course Removed
-
-/* 
-* Show Course info for a specific course.
-* @ param course vectors and search courseNumber (id) to find. 
-*/
-void printCourseInformation(vector<Course>& courses, string courseNumber) {
-
-    // Begin search
-    for (int z = 0; z < courses.size(); z++) {   // Iterate through all courses.
-        if (courseNumber == courses[z].courseId) {  // Is there a match?
-            cout << courses[z].courseId << ",   " << courses[z].m_title << '\n'; // Run preReqs
-            cout << "Prerequisites: ";
-            // Iterate through each req.
-            for (size_t i = 0; i < courses[z].preReqs.size(); i++) {
-                cout << courses[z].preReqs[i].courseId; // Print courses ID.
-                if (i < courses[z].preReqs.size() - 1) { // if it is a last one.
-                    cout << ", ";
-                }
-            }
-            cout << '\n';
-            break;  // Break after finding the match
-        }
-    }
-} // End prCInfo
-
-/*
-* Helper function for orderCourses
-*@ param vector to list courses; reqs is if you want the preReqs listed.
-*/
-void printAllCourses(vector<Course> allCourses, bool reqs) {
-    // Print all courses.
-    for (const auto& course : allCourses) { // Iterate through allCOurses.
-        cout << course.courseId << ",  " << course.m_title << '\n'; // Print basics.
-        // List preReqs; This is a fragement of the past that stayed in.
-        if (reqs) {
-            cout << "Prerequisites: ";
-            if (!course.preReqs.empty()) {
-                for (int i = 0; i < course.preReqs.size() - 1; i++) {
-                    cout << course.preReqs[i].courseId << ", ";
-                }
-                cout << course.preReqs.back().courseId << endl; // For the final part
-            }
-            else {
-                cout << "None" << '\n';
-            }
-        }
-    }
-    cout << '\n';
-}
-
-
-
-/* 
-    Load a csv to the vector
- * @param path to the csv.
- * @return The master vector to hold all the courses.
- */
-vector<Course> mountCSV(string csvPath) {
-    cout << "Attempting to mount CSV file " << csvPath << '\n';
-
-    // Define a vector data structure to hold a collection of courses.
-    vector<Course> allCourses;
-    string line; // For lines in the file.
-
-    // Attempt to open the file
-    fstream file(csvPath);
-    
-    // Is the file actually open?
-    if (!file) {
-        cerr << "Error: File not open" << '\n';
-        return allCourses; // Return blank vector.
-    }
-    else {
-        string courseId, courseTitle, preReqs_string;
-        vector<string> preReqs;
-
-        while (getline(file, line)) { //Read each line from the file
-            istringstream i_s_s(line); // Take the line for partitioning
-
-            // Grab each line ending at the ",'s // These should get the min requirements.
-            // If not ran, the file is incorrectly configured.
-            if (getline(i_s_s, courseId, ',') && getline(i_s_s, courseTitle, ',') ) {
-
-                // Get the preRews as a string.
-                getline(i_s_s, preReqs_string);
-
-                // Create course object with empty preReqs. We can add them later.
-                Course newCourse(courseId, courseTitle, {});
-
-                if (!preReqs_string.empty()) { // Only if the string isn't empty.
-                    // Prepare to segment the preReq
-                    istringstream preReqs_stream(preReqs_string);
-                    string preReq; // To add it.
-
-                    while (getline(preReqs_stream, preReq, ',')) { // Segment the preReqs.
-
-                        for (const auto& x : allCourses ){ // X = current iterated course
-                            if (preReq == x.courseId) { // Is it a valid course? Then add it the courses preReqs
-                                preReqs.push_back(x.courseId);
-                                newCourse.preReqs.push_back(x);
-                                break; // Save some data.
-                            } // End if prereq
-                        } 
-                    } 
-                } // end if prereq is empty
-                // Add the course.
-                allCourses.push_back(newCourse);
-            } // End if
-        } // End while line
-    } // End file open
-    cout << '\n';
-    return allCourses;
-} // End function.
+#include "CourseManagement/CourseManager.hpp"
+#include "Sorters/Sorter.hpp"
 
 int main(int argc, char* argv[]) {
+    CourseManager manager; // Call a course manager to handle this.
+    Sorter<CourseData::Course> sorter; // To sort objects
+    std::vector<CourseData::Course> testCourses; // For CSV
+    std::string userQuery; // For user search
+    ErrLog error;
+    
+    /*
+    - Load SQL database here.
+    - Will be implemented in category 3
+    - For now, use test CSV
+    */
 
-    // process command line arguments
-    string csvPath;
-    //csvPath = "Base_Input.csv";
-    csvPath = "My_Input.csv";
+    try {
+        testCourses = manager.loadCourses("seedInput.csv");
+    } catch (std::ios_base::failure) { // Typically "file not found"
+        std::cerr << "Failed to load CSV database; aborting\n";
+        return 0;
+    };
 
-    // Define a vector to hold all the courses.
-    vector<Course> allCourses;
-    string query;
+    int userChoice = 0;
 
-    int choice = 0;
-    while (choice != 4) {
-        cout << "Welcome to the course planner." << endl;
-        cout << "  1. Load Data Structure" << endl;
-        cout << "  2. Print Course List" << endl;
-        cout << "  3. Print Course" << endl;
-        cout << "  4. Exit" << endl;
+    manager.displayMenu();
 
-        cout << "What would you like to do? ";
+    do {
+        std::cout << "What would you like to do?\n";
 
-        cin >> choice;
+        userChoice = VarLoader::getIntFromCin();
 
-        cout << '\n';
+        switch (userChoice)
+        {
+            case 1:
+                std::cout << "Printing all courses...\n";
+                manager.printAllCourses(testCourses);
+                break;
+            case 2:
+                
+                std::cout << "Course Search Selected\nCourse Query: ";
 
-        switch (choice) {
+                std::getline(std::cin, userQuery);
 
-        case 1: // Load Data Strucutre
-            cout << "Loading courses..." << endl;
-
-            allCourses = mountCSV(csvPath);
-
-            cout << "Courses successfully loaded." << '\n';
-            break;
-
-        case 2: // Print Course LIst
-            printAllCourses(bubbleSort(allCourses), false);
-            break;
-
-        case 3: // Print specific course.
-            cout << "What course do you want to know about?";
-            cin >> query;
-
-            // Quickly throw a loop to turn it to upper case.
-            for (char& x : query) {
-                x = toupper(x);
-            }
+                // Search for the course.
+                manager.searchCourse(testCourses, userQuery);
             
-            printCourseInformation(allCourses, query);
-            break;
+                break;
+            case 3:  
+            // Sort Via Algorithms
+            std::cout << "\nWhich Algorithm would you like to use?\n";
 
-        default:
-            if (choice != 4) {
-                cout << choice << " isn't a valid option." << '\n';
-            }
-            break;
+            sorter.printChoices(sorter.getChoices());
+
+            userChoice = VarLoader::getIntFromCin();
+
+            switch (userChoice)
+                {
+                    case 1:  // Use Quick Sort
+                        std::cout << "Sorting with QuickSort...\n";
+                        sorter.quickSort(testCourses);
+                        manager.printAllCourses(testCourses);
+                        break;
+
+                    case 2:  // Use MergeSort
+                        std::cout << "Sorting with MergeSort...\n";
+                        sorter.mergeSort(testCourses);
+                        manager.printAllCourses(testCourses);
+                        break;
+
+                    case 3:  // Use BubbleSort
+                        std::cout << "Sorting with BubbleSort...\n";
+                        sorter.bubbleSort(testCourses);
+                        manager.printAllCourses(testCourses);
+                        break;
+
+                    case 0:
+                        std::cout << "Cancelled.\n";
+                        break;
+
+                    default:
+                        std::cout << "Invalid option. Try again.\n";
+                        break;
+                }
+                break;
+
+            case 4:
+                //Print dynamics, algorithmic efficiency
+                std::cout << "Check back in on After Category 2 is done!\n";
+                break;
+            case 5:
+                // print markdown of the algorithm's stats, database, comparsion
+                std::cout << "Check back in on After Category 2 is done!\n";
+                break;
+            case 6:
+                // Use optimized algorithm
+                std::cout << "Check back in on After Category 2 is done!\n";
+                break;
+            case 7:
+                // Quit
+                return 0;
+                break;
+            default:
+                std::cout << "Invalid option\n";
         }
-    }
 
-    cout << "Thank you for using the course planner!" << '\n';
+    } while (userChoice != 7);
+
+    std::cout << "Goodbye!\n";
 
     return 0;
 }

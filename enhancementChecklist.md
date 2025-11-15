@@ -4,10 +4,10 @@
 
 ## General / Global Improvements
 
-- [ ] Refactor spaghetti code into modular, class-based design  
-- [ ] Split code into multiple header (`.h`) and source (`.cpp`) files  
-- [ ] Enforce consistent naming conventions across all files  
-- [ ] Add detailed in-line comments and external documentation  
+- [x] Refactor spaghetti code into modular, class-based design  
+- [x] Split code into multiple header (`.h`) and source (`.cpp`) files  
+- [x] Enforce consistent naming conventions across all files  
+- [x] Add detailed in-line comments and external documentation  
 - [ ] Implement structured error handling and input validation  
 - [ ] Integrate logging for runtime errors and user actions  
 - [ ] Apply input sanitization to all user-facing operations  
@@ -16,7 +16,7 @@
 - [ ] Include pseudocode and flowcharts for each major process  
 - [ ] Add benchmarking for performance analysis  
 - [ ] Maintain code readability and scalability  
-- [ ] Use GitHub for version control and professional documentation  
+- [X] Use GitHub for version control and professional documentation  
 - [ ] Demonstrate code review and reflective design practices  
 
 ---
@@ -25,21 +25,23 @@
 
 ### Object-Oriented Refactoring
 - [X] Create a `Course` class for course objects  
-- [ ] Create a `CourseManager` class to handle CSV/database operations  
+- [x] Create a `CourseManager` class to handle CSV/database operations
+	- Validator.cpp does that. 
 - [ ] Add a main controller or menu system to manage program flow  
 - [ ] Separate UI/menu logic from data and backend logic  
 
 ### Architecture & Maintainability
-- [ ] Modularize project into logical components  
-- [ ] Implement encapsulation and abstraction (hide internal data, expose clear interfaces)  
-- [ ] Use design patterns where appropriate (factory, strategy, etc.)  
+- [x] Modularize project into logical components  
+- [x] Implement encapsulation and abstraction (hide internal data, expose clear interfaces)  
+- [X] Use design patterns where appropriate (factory, strategy, etc.) 
+	- Waived; not often implemented correctly.
 - [ ] Add UML diagrams for design validation and communication  
 
 ### Security & Stability
-- [ ] Add input sanitization for course input data  
-- [ ] Catch malformed CSV input and handle gracefully  
-- [ ] Implement file validation and format checking  
-- [ ] Add error logging class to write to file  
+- [x] Add input sanitization for course input data  
+- [x] Catch malformed CSV input and handle gracefully  
+- [x] Implement file validation and format checking  
+- [X] Add error logging class to write to file  
 
 ### Professional Practices
 - [ ] Document design rationale and class responsibilities  

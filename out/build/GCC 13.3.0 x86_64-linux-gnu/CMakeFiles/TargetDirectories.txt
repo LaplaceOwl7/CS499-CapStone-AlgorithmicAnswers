@@ -1,0 +1,3 @@
+/home/aero-vanderwaals/SNHU/CS499/Data-Structures-And-Algorithms-main/out/build/GCC 13.3.0 x86_64-linux-gnu/CMakeFiles/MyProject.dir
+/home/aero-vanderwaals/SNHU/CS499/Data-Structures-And-Algorithms-main/out/build/GCC 13.3.0 x86_64-linux-gnu/CMakeFiles/edit_cache.dir
+/home/aero-vanderwaals/SNHU/CS499/Data-Structures-And-Algorithms-main/out/build/GCC 13.3.0 x86_64-linux-gnu/CMakeFiles/rebuild_cache.dir
